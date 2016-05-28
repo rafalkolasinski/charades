@@ -100,7 +100,7 @@
 			var $username = $('#username');
 
 			socket.on('new message', function(data) {
-				$chat.append('<div class="list-group-item">' + data.msg + '</div>');
+				$chat.append('<div class="list-group-item"><strong>' + data.user + ':</strong>&nbsp;' + data.msg + '</div>');
 			});
 
 			$messageForm.submit(function(e) {

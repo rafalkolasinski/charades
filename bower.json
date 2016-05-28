@@ -1,0 +1,22 @@
+{
+  "name": "charades",
+  "description": "Multiplayer charades app based on WebSockets.",
+  "main": "server.js",
+  "authors": [
+    "S. Grzegolec & R. Kolasinski"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/rafalkolasinski/charades",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-material-design": "^0.5.9",
+    "jquery": "^2.2.4"
+  }
+}
