@@ -26,19 +26,31 @@
 			    </div>
 			</div><!-- /.container-fluid -->
 		</nav>
-
+		<!-- LOGIN -->
+		<div id="user-login-area" class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<form id="userForm">
+						<div class="form-group label-floating">
+						    <input type="text" class="form-control username-input" id="username" placeholder="Enter your username">
+							<input type="submit" class="btn btn-primary" value="Login">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+				
 		<!-- page wrapper -->
 		<div id="page-wrapper" class="jumbotron">
-
 			<!-- canvas -->
 			<div class="row main-wrapper">
 				<div class="canvas-container">
 					<div class="panel panel-default">
-						<div class="panel-body">
+						<div class="panel-body currently-drawing-username">
 					    	<span><strong>Currently drawing:&nbsp;</strong></span>
 					    	<span id="drawing-user"></span>
 						</div>
-						<div class="panel-footer">
+						<div class="panel-footer timer">
 							<strong>Time left:&nbsp;</strong>
 							<span id="drawing-timer"></span>
 						</div>
@@ -61,9 +73,13 @@
 							<div class="well chat messages-container" id="chat"></div>
 							<form id="message-form">
 								<div class="form-group">
-									<label>Enter message</label>
-									<textarea class="form-control" id="message"></textarea><br />
-									<input type="submit" class="btn btn-primary" id="send-message-button" value="Send message">
+									<textarea class="form-control" 
+										id="message"
+										placeholder="Enter message"></textarea><br />
+									<input type="submit" 
+										class="btn btn-primary" 
+										id="send-message-button" 
+										value="Send message">
 								</div>
 							</form>
 					</div>
@@ -71,21 +87,6 @@
 			</div>
 			<!-- end chat -->
 		</div>
-		<div id="user-login-area" class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<form id="userForm">
-						<div class="form-group label-floating">
-						    <label for="username" class="control-label">Enter your username</label>
-						    <input type="text" class="form-control" id="username">
-							<input type="submit" class="btn btn-primary" value="Login">
-						</div>
-					</form>
-				</div>
-			</div>
-			
-		</div>
-
 	<!-- MODAL -->
 		<div class="modal" id="turn-modal">
 			<div class="modal-dialog">
@@ -96,7 +97,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal" onclick="dismissTurn()">I don't want to draw</button>
-						<button type="button" class="btn btn-primary" onclick="startTurn()">Ok</button>
+						<button type="button" class="btn btn-primary" onclick="startOwnTurn()">Ok</button>
 					</div>
 				</div>
 			</div>
