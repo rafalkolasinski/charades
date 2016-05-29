@@ -192,9 +192,9 @@ $(document).ready(function() {
 				$message.prop('disabled', false);
 			}
 			turnSuccess = false;
-		}, 4000); //na razie ustawilam 20s do testowania, pozniej bedzie 60s
+		}, 20000); //na razie ustawilam 20s do testowania, pozniej bedzie 60s
 
-		displayTimer(4);
+		displayTimer(20);
 	}
 
 	//Użytkownik nie chce rysować
@@ -229,7 +229,7 @@ $(document).ready(function() {
 	*/
 	function displayTimer(seconds) {
 		var count = seconds;
-		$drawingTimer.html('0:' + count);
+		$drawingTimer.html('0:' + count).css('color', '#000000');
 
 		var timer = setInterval(function() {
 			count -= 1;
@@ -238,7 +238,11 @@ $(document).ready(function() {
 				$drawingTimer.html('0:00').css('color', '#FF0000');
 				return;
 			}
-			$drawingTimer.html('0:' + count);
+			if(count >= 10) {
+				$drawingTimer.html('0:' + count);
+			} else if(count < 10 && count > 0) {
+				$drawingTimer.html('0:0' + count);
+			}
 		}, 1000);
 	}
 
