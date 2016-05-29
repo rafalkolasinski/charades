@@ -53,12 +53,25 @@ $(document).ready(function() {
 	$userForm.submit(function(e) {
 		e.preventDefault();
 		userName = $username.val();
-		socket.emit('new_user', {userName: userName}, function(data) {
-			if(data) {
-				switchToGameBoard();
+
+		if(validateUsername(userName)) {
+			if($("#username-alert").length){
+				$("#username-alert").remove();
 			}
-		});
-		$username.val('');
+			//then validate for duplicated username
+			
+			//then redirect to to board
+			socket.emit('new_user', {userName: userName}, function(data) {
+				if(data) {
+					switchToGameBoard();
+				}
+			});
+			$username.val('');
+		} else {
+			if(!$("#username-alert").length){
+				$("#username-wrapper").append('<p id="username-alert">Username cannot be empty.</p>');
+			}
+		}
 	});
 
 	/**
