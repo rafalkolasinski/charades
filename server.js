@@ -7,14 +7,14 @@ var io = require('socket.io').listen(server);
 var line_history = [];
 var userNames = [];
 var connections = [];
-
-var $drawingUser = $('#drawing-user');
+var loggedInPlayers = [];
+var gameOn = false;
 
 server.listen(process.env.PORT || 3000);
 
 console.log('Server running @ port 3000.');
 
-app.use(express.static('public');
+app.use(express.static('public'));
 
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
@@ -30,7 +30,20 @@ io.sockets.on('connection', function(socket) {
 		userNames.splice(userNames.indexOf(socket.username), 1);
 		updateUsernames();
 		connections.splice(connections.indexOf(socket), 1);
+		if(loggedInPlayers.indexOf(socket) !== -1){
+			loggedInPlayers.splice(loggedInPlayers.indexOf(socket), 1);			
+		}
 		console.log('Disconnected: %s sockets connected.', connections.length);
+
+		if(loggedInPlayers.length < 1){
+			stopGame();
+		}
+	});
+
+	socket.on('check_login', function(data){
+		if(loggedInPlayers.indexOf(socket) === -1){
+			socket.emit('not_logged_in');
+		}
 	});
 
 	//Send message
@@ -41,9 +54,14 @@ io.sockets.on('connection', function(socket) {
 	//New user
 	socket.on('new_user', function(data, callback) {
 		callback(true);
-		socket.username = data;
+		socket.username = data.userName;
 		userNames.push(socket.username);
+		loggedInPlayers.push(socket);
 		updateUsernames();
+		if(!gameOn){
+			console.log("START GAME");
+			startGame();			
+		}
 	});
 
 	//new line handler
@@ -67,20 +85,20 @@ io.sockets.on('connection', function(socket) {
 		determineNextPlayerToDraw(socket);
 	});
 
-	socket.on('change_drawing_user', function(data) {
-		$drawingUsername.html(data.username);
-	})
-
 	function determineNextPlayerToDraw(socket){
-		console.log("NEXT");
-		var previousIndex = connections.indexOf(socket);
-		var index = previousIndex + 1;
+		if(gameOn){
+			console.log("NEXT");
+			var previousIndex = loggedInPlayers.indexOf(socket);
+			var index = previousIndex + 1;
 
-		if(connections[index] === undefined){
-			index = 0;
+			if(connections[index] === undefined){
+				index = 0;
+			}
+			var nextUserId = loggedInPlayers[index].id;
+
+			io.to(nextUserId).emit('your_turn');
+			io.sockets.emit('start_turn', {userName: loggedInPlayers[index].username});			
 		}
-		//następna osoba zostaje wyznaczona do rysowania
-		io.sockets.emit('your_turn', {id : connections[index].id.substring(2), user: socket.username});
 	}
 
 	//Get active users
@@ -95,8 +113,17 @@ io.sockets.on('connection', function(socket) {
 
 	//jesli jest więcej niz 1 użytkownik (na razie) gra sie rozpoczyna
 	//rysuje pierwszy użytkownik z listy
-	if(connections.length > 1){
-		io.sockets.emit('your_turn', {id : connections[0].id.substring(2)});		
+	function startGame(){
+		if(loggedInPlayers.length > 1){
+			console.log("GAME ON");
+			gameOn = true;
+
+			io.sockets.emit('start_game', {id : loggedInPlayers[0].id.substring(2), userName: loggedInPlayers[0].username});		
+		}
 	}
 
+	function stopGame(){
+		gameOn = false;
+		io.sockets.emit('stop_game');
+	}
 });

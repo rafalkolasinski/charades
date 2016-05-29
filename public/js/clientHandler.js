@@ -18,6 +18,7 @@ $(document).ready(function() {
 	var turnSuccess = false; 
 	var currentlyDrawing = '';
 	var html = '';
+	var userName = '';
 
 	var socket = io.connect();
 	var $messageForm = $('#message-form');
@@ -34,35 +35,12 @@ $(document).ready(function() {
 	var $drawingUser = $("#drawing-user");
 
 	document.clearBoard = clearBoard;
-	document.startTurn = startTurn;
+	document.startOwnTurn = startOwnTurn;
 	document.dismissTurn = dismissTurn;
 
 	$turnModal.hide();
+	setUpCanvas();
 
-	$canvas.width = width;
-	$canvas.height = height;
-
-	/**
-	* Handling mouse movement
-	*/
-	$canvas.onmousedown = function(e){
-		if(canDraw){
-		mouse.click = true;   					
-		}
-	};
-	$canvas.onmouseup = function(e){
-		if(canDraw){
-			mouse.click = false;					
-		}
-	};
-
-	$canvas.onmousemove = function(e) {
-		if(canDraw){
-			mouse.pos.x = e.offsetX;
-			mouse.pos.y = e.offsetY;
-			mouse.move = true;					
-		}
-	};
 
 	$messageForm.submit(function(e) {
 		e.preventDefault();
@@ -74,13 +52,42 @@ $(document).ready(function() {
 
 	$userForm.submit(function(e) {
 		e.preventDefault();
-		socket.emit('new_user', $username.val(), function(data) {
+		userName = $username.val();
+		socket.emit('new_user', {userName: userName}, function(data) {
 			if(data) {
-				$userLoginArea.hide();
-				$pageWrapper.show();
+				switchToGameBoard();
 			}
 		});
 		$username.val('');
+	});
+
+	/**
+	* Submitting message form on enter key
+	*/
+	$message.keypress(function(event) {
+	    if(event.which == 13) {
+	        event.preventDefault();
+	        $messageForm.submit();
+	    }
+	});
+
+	socket.on('connect', function(){
+		canDraw = false;
+
+		if(userName){
+			socket.emit('new_user', {userName: userName}, function(data){
+				if(!data){
+					switchToLogin();
+				}
+			});
+		}else{
+			switchToLogin();
+		}
+	});
+
+	socket.on('not_logged_in', function(data){
+		canDraw = false;
+		switchToLogin();
 	});
 
 	/**
@@ -121,14 +128,19 @@ $(document).ready(function() {
 		context.clearRect(0, 0, canvas.width, canvas.height);
 	});
 
-	//Na razie zrobilam tak, ze serwer wysyla do wszystkich info z socket id i rysuje ten, kto ma to id
-	socket.on('your_turn', function(data){
-		if(data.id === socket.id){
-			currentlyDrawing = data.user;
+	socket.on('your_turn', function(){
+		$turnModal.show();
+	});
 
-			console.log("MY TURN", socket.id);
-			//modal - użytkownik decyduje, czy chce rysowac
-			$turnModal.show();				
+	//Na razie zrobilam tak, ze serwer wysyla do wszystkich info z socket id i rysuje ten, kto ma to id
+	socket.on('start_turn', function (data){
+		startTurn(data);
+	});
+
+	socket.on('start_game', function(data){
+		startTurn(data);
+		if(data.id === socket.id){
+			$turnModal.show();
 		}
 	});
 
@@ -136,8 +148,6 @@ $(document).ready(function() {
 	//@TODO handling osób zgadujących
 	socket.on('charade_guessed', function(data){
 		if(data.id === socket.id) {
-			$
-
 			canDraw = false;
 			turnSuccess = true;
 			socket.emit('turn_finished');
@@ -146,15 +156,27 @@ $(document).ready(function() {
 		}
 	});
 
+	socket.on('stop_game', function(){
+		canDraw = false;
+		setCurrentlyDrawingUser('');
+	});
+
+	function setCurrentlyDrawingUser(userName){
+		currentlyDrawing = userName;
+		$drawingUser.html(currentlyDrawing);
+	}
+
+	function startTurn(data){
+		setCurrentlyDrawingUser(data.userName);
+	}
+
 	//rozpoczęcie tury przez użytkownika
-	function startTurn(){
+	function startOwnTurn(){
 		$turnModal.hide();
 		clearBoard();
 		$sendMessageButton.prop('disabled', true);
 		$message.prop('disabled', true);
 		canDraw = true;
-
-		$drawingUser.html(currentlyDrawing);
 
 		//jesli w ciągu ustawionego czasu nie otrzymamy info, ze ktoś zgadł (turnSuccess jest false)
 		//to tura jest przerwana
@@ -203,16 +225,6 @@ $(document).ready(function() {
 	mainLoop();
 
 	/**
-	* Submitting message form on enter key
-	*/
-	$("#message").keypress(function(event) {
-	    if(event.which == 13) {
-	        event.preventDefault();
-	        $("#message-form").submit();
-	    }
-	});
-
-	/**
 	* Displaying timer func.
 	*/
 	function displayTimer(seconds) {
@@ -228,5 +240,39 @@ $(document).ready(function() {
 			}
 			$drawingTimer.html('0:' + count);
 		}, 1000);
+	}
+
+	function switchToLogin(){
+		$userLoginArea.show();		
+		$pageWrapper.hide();
+	}
+
+	function switchToGameBoard(){
+		$userLoginArea.hide();		
+		$pageWrapper.show();
+	}
+
+	function setUpCanvas(){
+		$canvas.width = width;
+		$canvas.height = height;
+
+		$canvas.onmousedown = function(e){
+			if(canDraw){
+			mouse.click = true;   					
+			}
+		};
+		$canvas.onmouseup = function(e){
+			if(canDraw){
+				mouse.click = false;					
+			}
+		};
+
+		$canvas.onmousemove = function(e) {
+			if(canDraw){
+				mouse.pos.x = e.offsetX;
+				mouse.pos.y = e.offsetY;
+				mouse.move = true;					
+			}
+		};
 	}
 });
