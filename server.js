@@ -8,12 +8,13 @@ var line_history = [];
 var userNames = [];
 var connections = [];
 
+var $drawingUser = $('#drawing-user');
+
 server.listen(process.env.PORT || 3000);
 
 console.log('Server running @ port 3000.');
 
-app.use(express.static(__dirname + '/public'));
-app.use('/bower_components', express.static(__dirname + '/bower_components'));
+app.use(express.static('public');
 
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
@@ -66,6 +67,10 @@ io.sockets.on('connection', function(socket) {
 		determineNextPlayerToDraw(socket);
 	});
 
+	socket.on('change_drawing_user', function(data) {
+		$drawingUsername.html(data.username);
+	})
+
 	function determineNextPlayerToDraw(socket){
 		console.log("NEXT");
 		var previousIndex = connections.indexOf(socket);
@@ -75,7 +80,7 @@ io.sockets.on('connection', function(socket) {
 			index = 0;
 		}
 		//następna osoba zostaje wyznaczona do rysowania
-		io.sockets.emit('your_turn', {id : connections[index].id.substring(2)});
+		io.sockets.emit('your_turn', {id : connections[index].id.substring(2), user: socket.username});
 	}
 
 	//Get active users

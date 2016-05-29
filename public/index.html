@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Charades Game</title>
+		<!-- inject styles -->
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<link rel="stylesheet" type="text/css" href="css/bootstrap-material-design.min.css">
+		<link rel="stylesheet" type="text/css" href="css/ripples.min.css">
+
+		<!-- inject scripts -->
+		<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+		<script src="/socket.io/socket.io.js" type="text/javascript"></script>
+		<script src="js/material.js" type="text/javascript"></script>
+		<script src="js/ripples.js" type="text/javascript"></script>
+		<script src="js/clientHandler.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<!-- navbar -->
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+			    <!-- Brand and toggle get grouped for better mobile display -->
+			    <div class="navbar-header">
+			      <a class="navbar-brand" href="#">CHARADES</a>
+			    </div>
+			</div><!-- /.container-fluid -->
+		</nav>
+
+		<!-- page wrapper -->
+		<div id="page-wrapper" class="jumbotron">
+
+			<!-- canvas -->
+			<div class="row main-wrapper">
+				<div class="canvas-container">
+					<div class="panel panel-default">
+						<div class="panel-body">
+					    	<span><strong>Currently drawing:&nbsp;</strong></span>
+					    	<span id="drawing-user"></span>
+						</div>
+						<div class="panel-footer">
+							<strong>Time left:&nbsp;</strong>
+							<span id="drawing-timer"></span>
+						</div>
+					</div>
+					<!-- insert canvas code here -->
+					<canvas id="canvas">CANVAS</canvas>
+					<button class="btn btn-primary" onclick="clearBoard()">Clear</button>
+				</div>
+			<!-- end canvas -->
+			
+			<!-- chat -->
+				<div class="chat-container">
+					<div class="row">
+							<div class="row users-container">
+								<div class="well">
+									<h4>Online users</h4>
+									<ul class="list-group users-list" id="users"></ul>
+								</div>
+							</div>									
+							<div class="well chat messages-container" id="chat"></div>
+							<form id="message-form">
+								<div class="form-group">
+									<label>Enter message</label>
+									<textarea class="form-control" id="message"></textarea><br />
+									<input type="submit" class="btn btn-primary" id="send-message-button" value="Send message">
+								</div>
+							</form>
+					</div>
+				</div>
+			</div>
+			<!-- end chat -->
+		</div>
+		<div id="user-login-area" class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<form id="userForm">
+						<div class="form-group label-floating">
+						    <label for="username" class="control-label">Enter your username</label>
+						    <input type="text" class="form-control" id="username">
+							<input type="submit" class="btn btn-primary" value="Login">
+						</div>
+					</form>
+				</div>
+			</div>
+			
+		</div>
+
+	<!-- MODAL -->
+		<div class="modal" id="turn-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title">Your turn!</h4>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" onclick="dismissTurn()">I don't want to draw</button>
+						<button type="button" class="btn btn-primary" onclick="startTurn()">Ok</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
