@@ -2,6 +2,10 @@
 $.material.init();
 
 $(document).ready(function() {
+	var socket = io();
+
+	//Request for userlist
+	socket.emit('req_users');
 
 	var mouse = { 
     	click: false,
@@ -19,8 +23,8 @@ $(document).ready(function() {
 	var currentlyDrawing = '';
 	var html = '';
 	var userName = '';
+	var userlist = [];
 
-	var socket = io.connect();
 	var $messageForm = $('#message-form');
 	var $message = $('#message');
 	var $sendMessageButton = $('#send-message-button');
@@ -41,6 +45,12 @@ $(document).ready(function() {
 	$turnModal.hide();
 	setUpCanvas();
 
+	/**
+	* Populate userlist by server response
+	*/
+	socket.on('res_users', function(data) {
+		userlist = data;
+	});
 
 	$messageForm.submit(function(e) {
 		e.preventDefault();
@@ -54,23 +64,30 @@ $(document).ready(function() {
 		e.preventDefault();
 		userName = $username.val();
 
+		//Empty username validation
 		if(validateUsername(userName)) {
 			if($("#username-alert").length){
 				$("#username-alert").remove();
 			}
-			//then validate for duplicated username
-			
-			//then redirect to to board
-			socket.emit('new_user', {userName: userName}, function(data) {
-				if(data) {
-					switchToGameBoard();
+			//Duplicate username validation
+			if(userlist.length === 0 || $.inArray(userName, userlist) === -1) {
+				socket.emit('new_user', {userName: userName}, function(data) {
+					if(data) {
+						switchToGameBoard();
+					}
+				});
+				$username.val('');
+			} else {
+				if($("#username-alert").length){
+					$("#username-alert").remove();
 				}
-			});
-			$username.val('');
-		} else {
-			if(!$("#username-alert").length){
-				$("#username-wrapper").append('<p id="username-alert">Username cannot be empty.</p>');
+				$("#username-wrapper").append('<p id="username-alert">Username already exists.</p>');
 			}
+		} else {
+			if($("#username-alert").length){
+				$("#username-alert").remove();
+			}
+			$("#username-wrapper").append('<p id="username-alert">Username cannot be empty.</p>');
 		}
 	});
 

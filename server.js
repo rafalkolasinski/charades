@@ -21,6 +21,11 @@ app.get('/', function(req, res) {
 });
 
 io.sockets.on('connection', function(socket) {
+	//Sends users array to all clients on connection
+	socket.on('req_users', function() {
+		socket.emit('res_users', userNames);
+	});
+
 	//Connect
 	connections.push(socket);
 	console.log('Connected: %s sockets connected.', connections.length);
