@@ -16,6 +16,10 @@
 		<script src="js/ripples.js" type="text/javascript"></script>
 		<script src="js/clientHandler.js" type="text/javascript"></script>
 		<script src="js/utils.js" type="text/javascript"></script>
+		<script src="js/CanvasManager.js" type="text/javascript"></script>
+		<script src="js/TurnService.js" type="text/javascript"></script>
+		<script src="js/ClientService.js" type="text/javascript"></script>
+		<script src="js/ServerMessagesConstant.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<!-- navbar -->
@@ -27,6 +31,11 @@
 			    </div>
 			</div><!-- /.container-fluid -->
 		</nav>
+		<!--PHRASE GUESSED ALERT-->
+		<div class="alert alert-dismissible alert-info" id="charade-guessed-alert">
+			<button type="button" class="close" data-dismiss="alert" onclick="closeCharadeGuessedAlert()">×</button>
+			<strong>Charade guessed!</strong>
+		</div>
 		<!-- LOGIN -->
 		<div id="user-login-area" class="container">
 			<div class="row">
@@ -34,8 +43,10 @@
 					<form id="userForm">
 						<div id="username-wrapper" class="form-group label-floating">
 						    <input type="text" class="form-control username-input" id="username" placeholder="Enter your username">
+							<p id="username-alert"></p>
 							<input type="submit" class="btn btn-primary" value="Login">
 						</div>
+
 					</form>
 				</div>
 			</div>
@@ -47,9 +58,13 @@
 			<div class="row main-wrapper">
 				<div class="canvas-container">
 					<div class="panel panel-default">
-						<div class="panel-body currently-drawing-username">
+						<div id="current-user" class="panel-body currently-drawing-username">
 					    	<span><strong>Currently drawing:&nbsp;</strong></span>
 					    	<span id="drawing-user"></span>
+						</div>
+						<div id="current-phrase" class="panel-body">
+					    	<span><strong>Phrase:&nbsp;</strong></span>
+					    	<span id="drawing-phrase"></span>
 						</div>
 						<div class="panel-footer timer">
 							<strong>Time left:&nbsp;</strong>
@@ -66,12 +81,12 @@
 				<div class="chat-container">
 					<div class="row">
 							<div class="row users-container">
-								<div class="well">
+								<div class="well well-sm">
 									<h4>Online users</h4>
 									<ul class="list-group users-list" id="users"></ul>
 								</div>
 							</div>									
-							<div class="well chat messages-container" id="chat"></div>
+							<div class="well well-sm chat messages-container" id="chat"></div>
 							<form id="message-form">
 								<div class="form-group">
 									<textarea class="form-control" 
@@ -88,7 +103,7 @@
 			</div>
 			<!-- end chat -->
 		</div>
-	<!-- MODAL -->
+		<!--DRAWING TURN PROMPT-->
 		<div class="modal" id="turn-modal">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -98,10 +113,11 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal" onclick="dismissTurn()">I don't want to draw</button>
-						<button type="button" class="btn btn-primary" onclick="startOwnTurn()">Ok</button>
+						<button type="button" class="btn btn-primary" onclick="acceptTurn()">Ok</button>
 					</div>
 				</div>
 			</div>
 		</div>
+
 	</body>
 </html>
