@@ -8,6 +8,7 @@
 		<link rel="stylesheet" type="text/css" href="css/main.css">
 		<link rel="stylesheet" type="text/css" href="css/bootstrap-material-design.min.css">
 		<link rel="stylesheet" type="text/css" href="css/ripples.min.css">
+		<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
 		<!-- inject scripts -->
 		<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
@@ -33,21 +34,28 @@
 		</nav>
 		<!--PHRASE GUESSED ALERT-->
 		<div class="alert alert-dismissible alert-info" id="charade-guessed-alert">
-			<button type="button" class="close" data-dismiss="alert" onclick="closeCharadeGuessedAlert()">×</button>
+			<button type="button btn-basic" class="close" data-dismiss="alert" onclick="closeCharadeGuessedAlert()">×</button>
 			<strong>Charade guessed!</strong>
 		</div>
 		<!-- LOGIN -->
 		<div id="user-login-area" class="container">
-			<div class="row">
+			<div class="row full-width">
+				<div class="col-md-12 welcome-message">
+					<div class="panel panel-default">
+						<div class="panel-header">Welcome to Charades!</div>
+						<div class="panel-content">Please choose the username to start playing!</div>
+					</div>
+				</div>
 				<div class="col-md-12">
-					<form id="userForm">
-						<div id="username-wrapper" class="form-group label-floating">
-						    <input type="text" class="form-control username-input" id="username" placeholder="Enter your username">
-							<p id="username-alert"></p>
-							<input type="submit" class="btn btn-primary" value="Login">
-						</div>
-
-					</form>
+					<div class="panel panel-default">
+						<form id="userForm">
+							<div id="username-wrapper" class="form-group label-floating">
+							    <input type="text" class="form-control username-input" id="username" placeholder="Enter your username">
+								<p id="username-alert"></p>
+								<input type="submit" class="btn btn-primary btn-basic" value="Login">
+							</div>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -58,6 +66,9 @@
 			<div class="row main-wrapper">
 				<div class="canvas-container">
 					<div class="panel panel-default">
+						<div class="panel-header">
+							<span>Game rules</span>
+						</div>
 						<div id="current-user" class="panel-body currently-drawing-username">
 					    	<span><strong>Currently drawing:&nbsp;</strong></span>
 					    	<span id="drawing-user"></span>
@@ -72,8 +83,8 @@
 						</div>
 					</div>
 					<!-- insert canvas code here -->
-					<canvas id="canvas">CANVAS</canvas>
-					<button class="btn btn-primary" onclick="clearBoard()">Clear</button>
+					<canvas class="panel panel-default" id="canvas">CANVAS</canvas>
+					<button class="btn btn-primary btn-basic" onclick="clearBoard()">Clear</button>
 				</div>
 			<!-- end canvas -->
 			
@@ -81,23 +92,25 @@
 				<div class="chat-container">
 					<div class="row">
 							<div class="row users-container">
-								<div class="well well-sm">
-									<h4>Online users</h4>
+								<div class="panel panel-default">
+									<span class="panel-body users-header">Online users</span>
 									<ul class="list-group users-list" id="users"></ul>
 								</div>
 							</div>									
-							<div class="well well-sm chat messages-container" id="chat"></div>
-							<form id="message-form">
-								<div class="form-group">
-									<textarea class="form-control" 
-										id="message"
-										placeholder="Enter message"></textarea><br />
-									<input type="submit" 
-										class="btn btn-primary" 
-										id="send-message-button" 
-										value="Send message">
-								</div>
-							</form>
+							<div class="panel panel-default chat messages-container" id="chat"></div>
+							<div class="panel panel-default message-form-wrapper">
+								<form id="message-form">
+									<div class="form-group">
+										<textarea class="form-control" 
+											id="message"
+											placeholder="Enter message"></textarea><br />
+										<input type="submit" 
+											class="btn btn-primary btn-basic" 
+											id="send-message-button" 
+											value="Send message">
+									</div>
+								</form>
+							</div>
 					</div>
 				</div>
 			</div>

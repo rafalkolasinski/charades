@@ -127,6 +127,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		userName = $username.val();
 		$usernameAlert.hide();
+		$usernameAlert.removeClass('username-alert-wrapper');
 
 		//Empty username validation
 		if(validateUsername(userName)) {
@@ -136,10 +137,10 @@ $(document).ready(function() {
 				switchToGameBoard();				
 				$username.val('');
 			} else {
-				setUsernameAlert('Username already exists');
+				setUsernameAlert('Username already exists!');
 			}
 		} else {
-			setUsernameAlert('Username cannot be empty');
+			setUsernameAlert('Username cannot be empty!');
 		}
 	});
 
@@ -165,14 +166,14 @@ $(document).ready(function() {
 	function createUserlist(userlist){
 		html = '';
 		for( var i=0; i < userlist.length; i++) {
-			html += '<li class="list-group-item users-item">' + userlist[i] + '</li>';	
+			html += '<li class="users-item">' + userlist[i] + '</li>';	
 		}
 		$users.html(html);
 	}
 
 	function createMessage(username, message, classNames){
 		var messageElement = document.createElement('div');
-		messageElement.innerHTML = '<strong>' + username + ':</strong>&nbsp;' + message ;
+		messageElement.innerHTML = '<div class="message-user"><span class="message-username"><strong>' + username + ':</strong></span>&nbsp;<span class="message-content">' + message + '</span></div>';
 		messageElement.className = classNames;
 		return messageElement;
 	}
@@ -180,12 +181,12 @@ $(document).ready(function() {
 	function addNewMessage(data){
 		if(data.phrase_guessed){
 			$chat.append(
-				createMessage(data.username, data.message, 'list-group-item messages-item phrase-guessed')
+				createMessage(data.username, data.message, 'messages-item phrase-guessed')
 			);
 
 		}else{
 			$chat.append(
-				createMessage(data.username, data.message, 'list-group-item messages-item')
+				createMessage(data.username, data.message, 'messages-item')
 			);
 		}
 
@@ -194,7 +195,8 @@ $(document).ready(function() {
 
 	function setUsernameAlert(error){
 		$usernameAlert.show();
-		$usernameAlert.html(error);		
+		$usernameAlert.html(error);
+		$usernameAlert.addClass('username-alert-wrapper');
 	}
 
 	//Czyszczenie tablicy do rysowania

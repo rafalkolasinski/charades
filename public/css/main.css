@@ -1,9 +1,74 @@
 body {
 	outline: none;
+	font-family: 'Roboto', sans-serif;
 }
 
 #page-wrapper {
 	display: none;
+}
+
+#user-login-area {
+	height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.full-width {
+	width: 100%;
+}
+
+.panel-header {
+	height: 50px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    background-color: #009688;
+    color: white;
+    font-size: 18px;
+    text-transform: uppercase;
+}
+
+.panel-content {
+	display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    height: 50px;
+}
+
+#message {
+    padding: 15px;
+}
+
+.username-input {
+    margin-bottom: 40px !important;
+    padding: 25px !important;
+}
+
+.username-alert-wrapper {
+	color: #121212;
+    background-color: #DDD;
+    margin-top: 20px;
+    padding: 15px;
+    text-align: center;
 }
 
 .currently-drawing-username, .timer {
@@ -15,19 +80,40 @@ body {
 	padding: 0px 20px;
 }
 
+.users-container .users-header {
+	text-transform: uppercase;
+	font-size: 18px;
+    margin: 0;
+    background: #009688;
+    color: white;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
 .users-list {
 	min-width: 400px;
 	overflow-y: scroll;
 	max-height: 120px; 				
 }
 
-.users-item {
+.users-list .users-item {
 	height: 20px;
 	font-size: 12px;
 	line-height: 20px;
 	padding: 0px 0px 0px 10px !important;
+    margin: 10px;
+    font-size: 16px;
 }
-
 
 h4 {
 	margin-top: 5px !important;
@@ -37,10 +123,36 @@ h4 {
 	min-width: 400px;
 }
 
-.messages-container{
+.form-group {
+	padding: 0 !important;
+}
+
+.btn-basic {
+	font-size: 16px;
+	width: 100%;
+    background-color: #009688 !important;
+    color: white !important;
+    border-radius: 0px !important;
+    margin: 0 !important;
+    height: 50px;
+}
+
+.btn-basic:hover {
+    background-color: #00BBAA !important;
+}
+
+.messages-container {
 	height: 300px;
 	overflow-y: scroll;
 	width: 100%;
+}
+
+.message-user .message-username {
+
+}
+
+.message-user .message-content {
+	
 }
 
 .messages-item {
@@ -53,12 +165,14 @@ h4 {
 }
 
 #canvas {
+	margin-bottom: 20px;
 	display: block;
 	background-color: #fff;
 }
 
 .main-wrapper {
 	padding: 0px 30px 30px 30px;
+	margin: 0;
 	display: -webkit-flex;
 	display: -ms-flexbox;
 	display: flex;
@@ -79,4 +193,20 @@ h4 {
 .btn:focus, 
 .btn:active {
 	outline: none !important;
+}
+
+.footer-basic {
+    height: 100px;
+    bottom: 0;
+    width: 100%;
+    background-color: #666;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-basic .footer-label {
+    margin: 10px;
+    text-align: center;
+    color: #BBB;
 }

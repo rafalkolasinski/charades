@@ -10,8 +10,8 @@ var CanvasManager = function () {
 	};
 
 	var context = $canvas.getContext('2d');
-	var width   = window.innerWidth / 2
-	var height  = window.innerHeight / 1.5;
+	var width   = window.innerWidth / 2.25;
+	var height  = window.innerHeight / 1.75;
 
 
 	this.setUpCanvas = function(){
