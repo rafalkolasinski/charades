@@ -21,7 +21,7 @@ $(document).ready(function() {
 	var $userLoginArea = $('#user-login-area');
 	var $users = $('#users');
 	var $username = $('#username');
-	var $usernameAlert = $('#username-alert');
+	var $usernameAlert = '';
 	var $turnModal = $('#turn-modal');
 	var $currentPhrase = $('#current-phrase');
 	var $currentUser = $('#current-user');
@@ -126,8 +126,11 @@ $(document).ready(function() {
 	$userForm.submit(function(e) {
 		e.preventDefault();
 		userName = $username.val();
-		$usernameAlert.hide();
-		$usernameAlert.removeClass('username-alert-wrapper');
+		if($usernameAlert) {
+			$usernameAlert.remove();
+		}
+		// $usernameAlert.hide();
+		// $usernameAlert.removeClass('username-alert-wrapper');
 
 		//Empty username validation
 		if(validateUsername(userName)) {
@@ -194,7 +197,9 @@ $(document).ready(function() {
 	}
 
 	function setUsernameAlert(error){
-		$usernameAlert.show();
+		// $usernameAlert.show();
+		$('.username-input + .btn-basic').before($("<p id='username-alert'></p>"));
+		$usernameAlert = $('#username-alert');
 		$usernameAlert.html(error);
 		$usernameAlert.addClass('username-alert-wrapper');
 	}

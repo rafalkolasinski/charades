@@ -51,7 +51,6 @@
 						<form id="userForm">
 							<div id="username-wrapper" class="form-group label-floating">
 							    <input type="text" class="form-control username-input" id="username" placeholder="Enter your username">
-								<p id="username-alert"></p>
 								<input type="submit" class="btn btn-primary btn-basic" value="Login">
 							</div>
 						</form>
@@ -67,7 +66,6 @@
 				<div class="canvas-container">
 					<div class="panel panel-default">
 						<div class="panel-header">
-							<span>Game rules</span>
 						</div>
 						<div id="current-user" class="panel-body currently-drawing-username">
 					    	<span><strong>Currently drawing:&nbsp;</strong></span>
@@ -93,7 +91,7 @@
 					<div class="row">
 							<div class="row users-container">
 								<div class="panel panel-default">
-									<span class="panel-body users-header">Online users</span>
+									<span class="panel-body panel-header">Online users</span>
 									<ul class="list-group users-list" id="users"></ul>
 								</div>
 							</div>									
@@ -103,7 +101,7 @@
 									<div class="form-group">
 										<textarea class="form-control" 
 											id="message"
-											placeholder="Enter message"></textarea><br />
+											placeholder="Enter message"></textarea>
 										<input type="submit" 
 											class="btn btn-primary btn-basic" 
 											id="send-message-button" 
@@ -121,7 +119,6 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 						<h4 class="modal-title">Your turn!</h4>
 					</div>
 					<div class="modal-footer">
