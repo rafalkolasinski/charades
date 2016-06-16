@@ -47,7 +47,7 @@
 				<div class="col-md-12 welcome-message">
 					<div class="panel panel-default">
 						<div class="panel-header">Welcome to Charades!</div>
-						<div class="panel-content">Please choose the username to start playing!</div>
+						<div class="panel-content">Please choose your username.</div>
 					</div>
 				</div>
 				<div class="col-md-12">
@@ -72,7 +72,7 @@
 						<div class="panel-header">
 						</div>
 						<div id="current-user" class="panel-body currently-drawing-username">
-					    	<span><strong>Currently drawing:&nbsp;</strong></span>
+					    	<span><strong>User currently drawing is:&nbsp;</strong></span>
 					    	<span id="drawing-user"></span>
 						</div>
 						<div id="current-phrase" class="panel-body">
@@ -85,7 +85,7 @@
 						</div>
 					</div>
 					<!-- insert canvas code here -->
-					<canvas class="panel panel-default" id="canvas">CANVAS</canvas>
+					<canvas class="panel panel-default" id="canvas">CANVAS BOARD</canvas>
 					<button class="btn btn-primary btn-basic" onclick="clearBoard()">Clear</button>
 				</div>
 			<!-- end canvas -->
@@ -123,7 +123,7 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title">Your turn!</h4>
+						<h4 class="modal-title">It's your turn to draw.</h4>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal" onclick="dismissTurn()">I don't want to draw</button>
