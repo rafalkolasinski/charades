@@ -2,8 +2,9 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
-var messagesConstants = require('./server_files/ServerMessagesConstant.js');
-var phrasesLibrary = require('./server_files/phrasesLibrary.js');
+
+var messagesConstants= require(__dirname + '/server_files/ServerMessagesConstant.js');
+var phrasesLibrary = require(__dirname + '/server_files/PhrasesLibrary.js');
 
 var line_history = [];
 var userNames = [];
