@@ -146,7 +146,13 @@ var TurnService = function(){
 		$waitingAlert.hide();
 	}
 
-	this.showWaitingAlert = function(){
+	this.showWaitingAlert = function(gameStopped){
+		if(gameStopped){
+			$waitingAlert.html('<h4>Game paused</h4><p>Looks like you\'re the only player left. The game will start if at least one more user joins you.</p>');
+		}else{
+			$waitingAlert.html('<h4>Hello!</h4><p>The game will start if at least one more user joins you.</p>');			
+		}
+
 		$waitingAlert.show();
 	}
 
