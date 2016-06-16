@@ -33,9 +33,13 @@
 			</div><!-- /.container-fluid -->
 		</nav>
 		<!--PHRASE GUESSED ALERT-->
-		<div class="alert alert-dismissible alert-info" id="charade-guessed-alert">
+		<div class="alert alert-dismissible alert-success" id="charade-guessed-alert">
 			<button type="button btn-basic" class="close" data-dismiss="alert" onclick="closeCharadeGuessedAlert()">×</button>
 			<strong>Charade guessed!</strong>
+		</div>
+		<div class="alert alert-dismissible alert-info" id="turn-over-alert">
+			<button type="button btn-basic" class="close" data-dismiss="alert" onclick="closeTurnOverAlert()">×</button>
+			<strong>Time's out! Charade wasn't guessed.</strong>
 		</div>
 		<div class="alert alert-dismissible alert-warning" id="waiting-alert">
 		</div>
@@ -73,7 +77,7 @@
 					    	<span><strong>User currently drawing is:&nbsp;</strong></span>
 					    	<span id="drawing-user"></span>
 						</div>
-						<div id="current-phrase" class="panel-body">
+						<div id="current-phrase" class="panel-body current-phrase">
 					    	<span><strong>Phrase:&nbsp;</strong></span>
 					    	<span id="drawing-phrase"></span>
 						</div>
