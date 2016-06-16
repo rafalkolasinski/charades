@@ -147,12 +147,10 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 		if(loggedInPlayers.length > 1){
 			console.log('GAME ON');
 			gameOn = true;
-			currentPhrase = randomPhrase();
 
 			io.sockets.emit(messages.GAME_START, {
 				id : loggedInPlayers[0].id.substring(2), 
-				userName: loggedInPlayers[0].username,
-				phrase: currentPhrase
+				userName: loggedInPlayers[0].username
 			});		
 		}
 	}
