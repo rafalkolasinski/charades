@@ -84,7 +84,7 @@ body {
     align-items: center;
 }
 
-.currently-drawing-username, .timer {
+.currently-drawing-username, .timer, .current-phrase {
 	padding: 5px !important;
 	font-size: 14px;
 }
@@ -223,4 +223,11 @@ h4 {
     margin: 10px;
     text-align: center;
     color: #BBB;
+}
+
+.alert {
+    position: absolute;
+    width: 100%;
+    top: 20px;
+    text-align: center;
 }
