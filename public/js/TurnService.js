@@ -14,6 +14,7 @@ var TurnService = function(){
 	var $message = $('#message');
 	var $sendMessageButton = $('#send-message-button');
 	var $charadeGuessedAlert = $('#charade-guessed-alert');
+	var $waitingAlert = $('#waiting-alert');
 
 	this.setCurrentlyDrawingUser = function(userName){
 		$drawingUser.html(userName);
@@ -139,6 +140,14 @@ var TurnService = function(){
 
 	this.closeCharadeGuessedAlert = function(){
 		$charadeGuessedAlert.hide();
+	}
+
+	this.closeWaitingAlert = function(){
+		$waitingAlert.hide();
+	}
+
+	this.showWaitingAlert = function(){
+		$waitingAlert.show();
 	}
 
 	this.setUpCanvas = canvasManager.setUpCanvas;

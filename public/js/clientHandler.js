@@ -36,6 +36,7 @@ $(document).ready(function() {
 		//Request for userlist
 		clientService.emit(ServerMessagesConstant.GET_USERS);
 		$turnModal.hide();
+		turnService.closeWaitingAlert();
 		turnService.closeCharadeGuessedAlert();
 		turnService.setUpCanvas();
 
@@ -90,6 +91,7 @@ $(document).ready(function() {
 	//-----GAME---------------------------------------------------------
 	//START GAME
 	socket.on(ServerMessagesConstant.GAME_START, function(data){
+		turnService.closeWaitingAlert();
 		$currentPhrase.hide();
 		$currentUser.show();
 		if(data.id === socket.id){
@@ -210,11 +212,13 @@ $(document).ready(function() {
 	}
 
 	function switchToLogin(){
+		turnService.closeWaitingAlert();
 		$userLoginArea.show();		
 		$pageWrapper.hide();
 	}
 
 	function switchToGameBoard(){
+		turnService.showWaitingAlert();
 		$userLoginArea.hide();
 		$pageWrapper.show();
 		$currentPhrase.hide();
