@@ -10,6 +10,8 @@ var userNames = [];
 var connections = [];
 var loggedInPlayers = [];
 var gameOn = false;
+var timer = null;
+var currentlyDrawingUSer = null;
 
 var currentPhrase = '';
 var messages = messagesConstants.ServerMessagesConstant;
@@ -58,14 +60,13 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 
 	//Send message
 	socket.on(messages.SEND_MESSAGE, function(data) {
-		console.log(data.message, currentPhrase);
+		io.sockets.emit(messages.NEW_MESSAGE, {message: data.message, username: socket.username, phrase: currentPhrase});		
 		if(data.message === currentPhrase){
+			clearTimeout(timer);
 			io.sockets.emit(messages.TURN_SUCCESS);
-			io.sockets.emit(messages.NEW_MESSAGE, {message: data.message, username: socket.username, phrase_guessed: true});
-		}else{
-			io.sockets.emit(messages.NEW_MESSAGE, {message: data.message, username: socket.username, phrase_guessed: false});
+			currentPhrase = '';
+			determineNextPlayerToDraw();
 		}
-
 	});
 
 	//New user
@@ -93,14 +94,9 @@ io.sockets.on(messages.CONNECTION, function(socket) {
     	io.sockets.emit(messages.CLEAR_BOARD);
    });
 
-	//tura jest zakończona - albo skonczl sie czas, albo ktoś zgadł
-	socket.on(messages.TURN_FINISHED, function(){
-		currentPhrase = '';
-		determineNextPlayerToDraw(socket);
-	});
 
 	socket.on(messages.DISMISS_TURN, function(){
-		determineNextPlayerToDraw(socket);
+		determineNextPlayerToDraw();
 	});
 
 	socket.on(messages.TURN_ACCEPTED, function(){
@@ -109,23 +105,39 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 
 		currentPhrase = randomPhrase();
 		io.sockets.emit(messages.TURN_START, {
-			userName: loggedInPlayers[acceptedSocketIndex].username,
-			phrase: currentPhrase
+			userName: loggedInPlayers[acceptedSocketIndex].username
 		});
 
+		console.log("PHRASE", currentPhrase);
 		io.to(loggedInPlayers[acceptedSocketIndex].id).emit(messages.TURN_PHRASE, {phrase: currentPhrase});
+
+		timer = setTimeout(function(){
+			currentPhrase = '';
+			clearTimeout(timer);
+			io.sockets.emit(messages.TURN_FAILURE);
+			determineNextPlayerToDraw();			
+			console.log("SERVER FAILURE");
+		}, 20000); //na razie ustawilam 20s do testowania, pozniej bedzie 60s
 	})
 
-	function determineNextPlayerToDraw(socket){
+	function determineNextPlayerToDraw(){
 		if(gameOn){
 			console.log('NEXT');
-			var previousIndex = loggedInPlayers.indexOf(socket);
-			var index = previousIndex + 1;
+			if(currentlyDrawingUSer === null){
+				index = 0
+			}else{
+				var previousIndex = loggedInPlayers.indexOf(currentlyDrawingUSer);
+				console.log('PREVIOUS', previousIndex);
+				var index = previousIndex + 1;
 
-			if(connections[index] === undefined){
-				index = 0;
+				if(connections[index] === undefined){
+					index = 0;
+				}				
 			}
-			var nextUserId = loggedInPlayers[index].id;
+
+			console.log(loggedInPlayers.length, index);
+			currentlyDrawingUSer = loggedInPlayers[index];
+			var nextUserId = currentlyDrawingUSer.id;
 
 			io.to(nextUserId).emit(messages.TURN_INIT);	
 		}
@@ -162,8 +174,9 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 	}
 
 	function randomPhrase(){
-		var max = phrasesLibrary.phrases.length;
+		var max = phrasesLibrary.phrases.length - 1;
 		var randomIndex = Math.floor(Math.random()*(max+1));
+		console.log(randomIndex);
 		return phrasesLibrary.phrases[randomIndex];
 	}
 });

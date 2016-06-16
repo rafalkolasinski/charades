@@ -1,7 +1,6 @@
 var TurnService = function(){
 	var canvasManager = CanvasManager();
 
-	var turnSuccess = false;
 	var timer = null;
 	var isOwnTurn = false;
 
@@ -29,8 +28,8 @@ var TurnService = function(){
 		$currentUser.hide();
 	}
 	this.startTurn = function (data){
-		turnSuccess = false;
 		if(!isOwnTurn){
+			displayTimer(20);
 			setCurrentlyDrawingUser(data.userName);	
 		}
 	}
@@ -46,24 +45,6 @@ var TurnService = function(){
 		switchMessages(true);
 		isOwnTurn = true;
 		canvasManager.enableDrawing();
-
-		//jesli w ciągu ustawionego czasu nie otrzymamy info, ze ktoś zgadł (turnSuccess jest false)
-		//to tura jest przerwana
-		setTimeout(function(){
-			if(!turnSuccess){
-				isOwnTurn = false;
-				canvasManager.disableDrawing();
-				clientService.emit(ServerMessagesConstant.CHANGE_DRAWING_USER, {username: ''});
-				clientService.emit(ServerMessagesConstant.TURN_FINISHED);
-				showTurnOverAlert();
-				switchMessages(false);
-			}else{
-				turnSuccess = false;				
-			}
-
-		}, 5000); //na razie ustawilam 20s do testowania, pozniej bedzie 60s
-
-		displayTimer(5);
 	}
 
 	//Użytkownik nie chce rysować
@@ -74,7 +55,6 @@ var TurnService = function(){
 		isOwnTurn = false;
 		canvasManager.disableDrawing();
 	}
-
 	/**
 	* Displaying timer func.
 	*/
@@ -83,35 +63,44 @@ var TurnService = function(){
 		$drawingTimer.html('0:' + count).css('color', '#000000');
 
 		timer = setInterval(function() {
-			if(!turnSuccess){
-				count -= 1;
-				if(count <= 0) {
-					clearInterval(timer);
-					$drawingTimer.html('0:00').css('color', '#FF0000');
-					return;
-				}
-				if(count >= 10) {
-					$drawingTimer.html('0:' + count);
-				} else if(count < 10 && count > 0) {
-					$drawingTimer.html('0:0' + count);
-				}				
+			count -= 1;
+			if(count <= 0) {
+				clearInterval(timer);
+				$drawingTimer.html('0:00').css('color', '#FF0000');
+				return;
+			}
+			if(count >= 10) {
+				$drawingTimer.html('0:' + count);
+			} else if(count < 10 && count > 0) {
+				$drawingTimer.html('0:0' + count);
 			}
 		}, 1000);
 	}
 
+
 	this.handleSuccessfulTurn = function() {
-		turnSuccess = true;
 		$charadeGuessedAlert.show();
 		setTimeout(function(){
 			$charadeGuessedAlert.hide();
 		}, 10000);
 
+		clearInterval(timer);
+		
 		if(isOwnTurn) {
-			clearInterval(timer);
 			setOwnTurn(false);
 			canvasManager.disableDrawing();
 			switchMessages(false);
 			clientService.emit(ServerMessagesConstant.TURN_FINISHED);
+		}
+	}
+
+	this.handleFailedTurn = function() {
+		showTurnOverAlert();
+		clearInterval(timer);				
+		if(isOwnTurn){
+			isOwnTurn = false;
+			canvasManager.disableDrawing();
+			switchMessages(false);			
 		}
 	}
 

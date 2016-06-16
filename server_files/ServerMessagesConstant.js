@@ -15,8 +15,8 @@ exports.ServerMessagesConstant = {
     TURN_ACCEPTED : 'turn_accepted',    
     TURN_START : 'turn_start',
     TURN_PHRASE : 'turn_phrase',
-    TURN_FINISHED : 'turn_finished',
     TURN_SUCCESS : 'turn_success',
+    TURN_FAILURE : 'turn_failure',
     DISMISS_TURN: 'dismiss_turn',
 
     CHANGE_DRAWING_USER : 'change_drawing_user',

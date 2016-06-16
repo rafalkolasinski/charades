@@ -124,6 +124,12 @@ $(document).ready(function() {
 		turnService.handleSuccessfulTurn();
 	});
 
+	//CHARADE NOT GUESSED
+	socket.on(ServerMessagesConstant.TURN_FAILURE, function(){
+		console.log("SERVER FAILURE");
+		turnService.handleFailedTurn();
+	})
+
 	//----------------------------------------------------------------
 
 	//USER FORM SUBMISSION (LOG IN)
@@ -180,24 +186,75 @@ $(document).ready(function() {
 
 	function createMessage(username, message, classNames){
 		var messageElement = document.createElement('div');
-		messageElement.innerHTML = '<div class="message-user"><span class="message-username"><strong>' + username + ':</strong></span>&nbsp;<span class="message-content">' + message + '</span></div>';
+		messageElement.innerHTML = '<div class="message-user"><span class="message-username"><strong>' + username 
+									+ ':</strong></span>&nbsp;<span class="message-content">' + message + '</span></div>';
 		messageElement.className = classNames;
 		return messageElement;
 	}
 
 	function addNewMessage(data){
-		if(data.phrase_guessed){
+		if(data.phrase === data.message){
 			$chat.append(
 				createMessage(data.username, data.message, 'messages-item phrase-guessed')
 			);
 
 		}else{
+			var formattedMessage = checkPhraseSimilarity(data.phrase, data.message);
+			var message = formattedMessage.length > 0 ? formattedMessage : data.message;
+
 			$chat.append(
-				createMessage(data.username, data.message, 'messages-item')
+				createMessage(data.username, message, 'messages-item')
 			);
 		}
 
 		$chat.scrollTop($chat[0].scrollHeight);
+	}
+
+	function checkPhraseSimilarity(phrase, message){
+		if(message.indexOf(phrase) !== -1){
+			return formatPartiallyCorrectMessage(phrase, message);
+		}else{
+			var formattedMessage = '';
+			formattedMessage = checkForWordFragments(phrase, message, 5);
+
+			if(formattedMessage.length === 0){
+				var phraseWords = phrase.split(' ');
+				for(key in phraseWords){
+					if(message.indexOf(phraseWords[key]) !== -1){
+						formattedMessage = formatPartiallyCorrectMessage(phraseWords[key], message);
+					}else{
+						formattedMessage = checkForWordFragments(phraseWords[key], message, 5);						
+					}
+
+					if(formattedMessage.length >0){
+						break;
+					}
+				}				
+			}
+			
+			return formattedMessage;
+		}
+	}
+
+	function checkForWordFragments(word, message, minLetterCount){
+		for(var i=word.length; i >= minLetterCount; i--){
+			var wordPart = word.substring(0, i);
+			if(message.indexOf(wordPart) !== -1){
+				return formatPartiallyCorrectMessage(wordPart, message);
+			}				
+		}
+		return '';
+	}
+
+	function formatPartiallyCorrectMessage(matchingPart, message){
+		console.log(matchingPart);
+		var indexStart = message.indexOf(matchingPart);
+		var indexEnd = indexStart + matchingPart.length;
+
+		var messageStart = message.substring(0, indexStart);
+		var messageMatch = message.substring(indexStart, indexEnd);
+		var messageEnd = message.substring(indexEnd);
+		return '<span>' + messageStart + '<span class="phrase-match">' + messageMatch + '</span>' + messageEnd + '</span>';
 	}
 
 	function setUsernameAlert(error){
@@ -220,7 +277,9 @@ $(document).ready(function() {
 	}
 
 	function switchToGameBoard(){
-		turnService.showWaitingAlert();
+		if(userlist.length === 0){
+			turnService.showWaitingAlert();
+		}
 		$userLoginArea.hide();
 		$pageWrapper.show();
 		$currentPhrase.hide();
