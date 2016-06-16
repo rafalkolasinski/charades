@@ -14,6 +14,7 @@ var TurnService = function(){
 	var $message = $('#message');
 	var $sendMessageButton = $('#send-message-button');
 	var $charadeGuessedAlert = $('#charade-guessed-alert');
+	var $turnOverAlert = $('#turn-over-alert');
 	var $waitingAlert = $('#waiting-alert');
 
 	this.setCurrentlyDrawingUser = function(userName){
@@ -54,14 +55,15 @@ var TurnService = function(){
 				canvasManager.disableDrawing();
 				clientService.emit(ServerMessagesConstant.CHANGE_DRAWING_USER, {username: ''});
 				clientService.emit(ServerMessagesConstant.TURN_FINISHED);
+				showTurnOverAlert();
 				switchMessages(false);
 			}else{
 				turnSuccess = false;				
 			}
 
-		}, 20000); //na razie ustawilam 20s do testowania, pozniej bedzie 60s
+		}, 5000); //na razie ustawilam 20s do testowania, pozniej bedzie 60s
 
-		displayTimer(20);
+		displayTimer(5);
 	}
 
 	//Użytkownik nie chce rysować
@@ -146,6 +148,18 @@ var TurnService = function(){
 		$waitingAlert.hide();
 	}
 
+	this.showTurnOverAlert = function(){
+		$turnOverAlert.show();
+
+		setTimeout(function(){
+			closeTurnOverAlert();
+		}, 10000);
+	}
+
+	this.closeTurnOverAlert = function(){
+			$turnOverAlert.hide();		
+	}
+
 	this.showWaitingAlert = function(gameStopped){
 		if(gameStopped){
 			$waitingAlert.html('<h4>Game paused</h4><p>Looks like you\'re the only player left. The game will start if at least one more user joins you.</p>');
@@ -154,6 +168,12 @@ var TurnService = function(){
 		}
 
 		$waitingAlert.show();
+	}
+
+	this.hideAlerts = function(){
+		closeWaitingAlert();
+		closeTurnOverAlert();
+		closeCharadeGuessedAlert();
 	}
 
 	this.stopGame = function(){

@@ -36,8 +36,7 @@ $(document).ready(function() {
 		//Request for userlist
 		clientService.emit(ServerMessagesConstant.GET_USERS);
 		$turnModal.hide();
-		turnService.closeWaitingAlert();
-		turnService.closeCharadeGuessedAlert();
+		turnService.hideAlerts();
 		turnService.setUpCanvas();
 
 		//pętla do rysowania
