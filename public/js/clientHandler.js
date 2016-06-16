@@ -114,7 +114,7 @@ $(document).ready(function() {
 
 	//STOP GAME
 	socket.on(ServerMessagesConstant.GAME_STOP, function(){
-		turnService.setCurrentlyDrawingUser('');
+		turnService.stopGame();
 	});
 
 	//CHARADE GUESSED

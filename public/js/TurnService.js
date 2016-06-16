@@ -156,6 +156,13 @@ var TurnService = function(){
 		$waitingAlert.show();
 	}
 
+	this.stopGame = function(){
+		dismissTurn();		
+		clearInterval(timer);
+		showWaitingAlert(true);
+		setCurrentlyDrawingUser('');
+	}
+
 	this.setUpCanvas = canvasManager.setUpCanvas;
 	this.drawLine = canvasManager.drawLine;
 	this.clearBoard = canvasManager.clearBoard;
