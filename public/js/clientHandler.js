@@ -113,7 +113,10 @@ $(document).ready(function() {
 
 	//STOP GAME
 	socket.on(ServerMessagesConstant.GAME_STOP, function(){
-		turnService.stopGame();
+		if(userName){
+			turnService.stopGame();
+			clearBoard();			
+		}
 	});
 
 	//CHARADE GUESSED
