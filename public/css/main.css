@@ -117,7 +117,7 @@ body {
 .users-list {
 	min-width: 400px;
 	overflow-y: scroll;
-	max-height: 120px; 				
+	height: 120px; 				
 }
 
 .users-list .users-item {
