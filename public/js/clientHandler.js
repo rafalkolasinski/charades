@@ -22,6 +22,7 @@ $(document).ready(function() {
 	var $users = $('#users');
 	var $username = $('#username');
 	var $usernameAlert = '';
+	var $messageAlert = '';
 	var $turnModal = $('#turn-modal');
 	var $currentPhrase = $('#current-phrase');
 	var $currentUser = $('#current-user');
@@ -144,16 +145,16 @@ $(document).ready(function() {
 
 		//Empty username validation
 		if(validateUsername(userName)) {
-			//Duplicate username validation
-			if(userlist.length === 0 || $.inArray(userName, userlist) === -1) {
+			var res = validateUsername(userName);
+
+			if(res.success === false) {
+				setAlert(res.message, 'username');
+			} else if(res.success === true){
+				console.log(res.message);
 				clientService.emit(ServerMessagesConstant.NEW_USER, {'userName': userName});
 				switchToGameBoard();				
 				$username.val('');
-			} else {
-				setUsernameAlert('Username already exists!');
 			}
-		} else {
-			setUsernameAlert('Username cannot be empty!');
 		}
 	});
 
@@ -161,9 +162,19 @@ $(document).ready(function() {
 	$messageForm.submit(function(e) {
 		e.preventDefault();
 		if($message.val()){
-			clientService.emit(ServerMessagesConstant.SEND_MESSAGE, {message: $message.val()});
+			var value = $message.val();
+			var res = validateChatMessage(value);
+
+			if(res.success === false) {
+				setAlert(res.message, 'message');
+			} else if(res.success === true) {
+				if($messageAlert) {
+					$messageAlert.remove();
+				} 
+				clientService.emit(ServerMessagesConstant.SEND_MESSAGE, {message: $message.val()});
+				$message.val('');
+			}
 		}
-		$message.val('');
 	});
 
 	/**
@@ -257,12 +268,19 @@ $(document).ready(function() {
 		return '<span>' + messageStart + '<span class="phrase-match">' + messageMatch + '</span>' + messageEnd + '</span>';
 	}
 
-	function setUsernameAlert(error){
-		// $usernameAlert.show();
-		$('.username-input + .btn-basic').before($("<p id='username-alert'></p>"));
-		$usernameAlert = $('#username-alert');
-		$usernameAlert.html(error);
-		$usernameAlert.addClass('username-alert-wrapper');
+	function setAlert(error, el){
+		if(el === 'username') {
+			// $usernameAlert.show();
+			$('.username-input + .btn-basic').before($("<p id='username-alert'></p>"));
+			$usernameAlert = $('#username-alert');
+			$usernameAlert.html(error);
+			$usernameAlert.addClass('alert-wrapper');
+		} else if(el === 'message') {
+			$('#message + .btn-basic').before($("<p id='message-alert'></p>"));
+			$messageAlert = $('#message-alert');
+			$messageAlert.html(error);
+			$messageAlert.addClass('alert-wrapper');
+		}
 	}
 
 	//Czyszczenie tablicy do rysowania

@@ -64,10 +64,11 @@ body {
     padding: 25px !important;
 }
 
-.username-alert-wrapper {
+.alert-wrapper {
+    font-size: 14px !important;
 	color: #121212;
     background-color: #DDD;
-    margin: 0px;
+    margin: 0px !important;
     height: 35px;
     text-align: center;
     display: -webkit-box;
