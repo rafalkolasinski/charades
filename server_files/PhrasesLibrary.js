@@ -42,7 +42,7 @@ exports.phrases = [
 	'the matrix',
 	'twilight',
 	'home alone',
-	'the simpsons'
+	'the simpsons',
 	'south park',
 	'game of thrones',
 	'futurama',
