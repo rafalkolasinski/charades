@@ -157,7 +157,7 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 				var previousIndex = loggedInPlayers.indexOf(currentlyDrawingUser);
 				var index = previousIndex + 1;
 
-				if(connections[index] === undefined){
+				if(loggedInPlayers[index] === undefined){
 					index = 0;
 				}				
 			}
