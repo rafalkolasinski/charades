@@ -1,5 +1,6 @@
 var CanvasManager = function () {
 	var $canvas  = $('#canvas')[0];
+	var $clearButton = $('#clear-boeard-button');
 	var drawingEnabled = false;
 
 	var mouse = { 
@@ -36,6 +37,8 @@ var CanvasManager = function () {
 				mouse.move = true;					
 			}
 		};
+
+		$clearButton.prop( "disabled", true );
 	}
 
 	this.drawLine = function(lineData){
@@ -68,10 +71,12 @@ var CanvasManager = function () {
 
 	this.enableDrawing = function(){
 		drawingEnabled = true;
+		$clearButton.prop("disabled", false);
 	}
 
 	this.disableDrawing = function(){
 		drawingEnabled = false;
+		$clearButton.prop("disabled", true);
 	}
 
 	this.clearBoard = function(){
