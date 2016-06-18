@@ -201,7 +201,7 @@ $(document).ready(function() {
 	}
 
 	function addNewMessage(data){
-		if(data.phrase === data.message){
+		if(data.phrase === data.message.toLowerCase()){
 			$chat.append(
 				createMessage(data.username, data.message, 'messages-item phrase-guessed')
 			);
@@ -218,7 +218,8 @@ $(document).ready(function() {
 		$chat.scrollTop($chat[0].scrollHeight);
 	}
 
-	function checkPhraseSimilarity(phrase, message){
+	function checkPhraseSimilarity(phrase, messageToCheck){
+		message = messageToCheck.toLowerCase();
 		if(message.indexOf(phrase) !== -1){
 			return formatPartiallyCorrectMessage(phrase, message);
 		}else{
@@ -227,6 +228,7 @@ $(document).ready(function() {
 
 			if(formattedMessage.length === 0){
 				var phraseWords = phrase.split(' ');
+
 				for(key in phraseWords){
 					if(message.indexOf(phraseWords[key]) !== -1){
 						formattedMessage = formatPartiallyCorrectMessage(phraseWords[key], message);
