@@ -71,7 +71,7 @@ $(document).ready(function() {
 	*/
 	socket.on(ServerMessagesConstant.SEND_USERNAMES, function(data) {
 		userlist = data.userlist
-		createUserlist(userlist);
+		$users.html(createUserlist(userlist));
 	});
 
 	/**
@@ -184,88 +184,12 @@ $(document).ready(function() {
 	    }
 	});
 
-	function createUserlist(userlist){
-		html = '';
-		for( var i=0; i < userlist.length; i++) {
-			html += '<li class="users-item">' + userlist[i] + '</li>';	
-		}
-		$users.html(html);
-	}
-
-	function createMessage(username, message, classNames){
-		var messageElement = document.createElement('div');
-		messageElement.innerHTML = '<div class="message-user"><span class="message-username"><strong>' + username 
-									+ ':</strong></span>&nbsp;<span class="message-content">' + message + '</span></div>';
-		messageElement.className = classNames;
-		return messageElement;
-	}
 
 	function addNewMessage(data){
-		if(data.phrase === data.message.toLowerCase()){
-			$chat.append(
-				createMessage(data.username, data.message, 'messages-item phrase-guessed')
-			);
-
-		}else{
-			var formattedMessage = checkPhraseSimilarity(data.phrase, data.message);
-			var message = formattedMessage.length > 0 ? formattedMessage : data.message;
-
-			$chat.append(
-				createMessage(data.username, message, 'messages-item')
-			);
-		}
-
+		$chat.append(createMessage(data));
 		$chat.scrollTop($chat[0].scrollHeight);
 	}
 
-	function checkPhraseSimilarity(phrase, messageToCheck){
-		message = messageToCheck.toLowerCase();
-		if(message.indexOf(phrase) !== -1){
-			return formatPartiallyCorrectMessage(phrase, message);
-		}else{
-			var formattedMessage = '';
-			formattedMessage = checkForWordFragments(phrase, message, 5);
-
-			if(formattedMessage.length === 0){
-				var phraseWords = phrase.split(' ');
-
-				for(key in phraseWords){
-					if(message.indexOf(phraseWords[key]) !== -1){
-						formattedMessage = formatPartiallyCorrectMessage(phraseWords[key], message);
-					}else{
-						formattedMessage = checkForWordFragments(phraseWords[key], message, 5);						
-					}
-
-					if(formattedMessage.length >0){
-						break;
-					}
-				}				
-			}
-			
-			return formattedMessage;
-		}
-	}
-
-	function checkForWordFragments(word, message, minLetterCount){
-		for(var i=word.length; i >= minLetterCount; i--){
-			var wordPart = word.substring(0, i);
-			if(message.indexOf(wordPart) !== -1){
-				return formatPartiallyCorrectMessage(wordPart, message);
-			}				
-		}
-		return '';
-	}
-
-	function formatPartiallyCorrectMessage(matchingPart, message){
-		console.log(matchingPart);
-		var indexStart = message.indexOf(matchingPart);
-		var indexEnd = indexStart + matchingPart.length;
-
-		var messageStart = message.substring(0, indexStart);
-		var messageMatch = message.substring(indexStart, indexEnd);
-		var messageEnd = message.substring(indexEnd);
-		return '<span>' + messageStart + '<span class="phrase-match">' + messageMatch + '</span>' + messageEnd + '</span>';
-	}
 
 	function setAlert(error, el){
 		if(el === 'username') {
