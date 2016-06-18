@@ -134,7 +134,6 @@ var checkForWordFragments = function(word, message, minLetterCount){
 }
 
 var formatPartiallyCorrectMessage = function(matchingPart, message){
-	console.log(matchingPart);
 	var indexStart = message.indexOf(matchingPart);
 	var indexEnd = indexStart + matchingPart.length;
 

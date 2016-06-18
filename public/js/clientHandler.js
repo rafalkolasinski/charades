@@ -124,7 +124,6 @@ $(document).ready(function() {
 
 	//CHARADE NOT GUESSED
 	socket.on(ServerMessagesConstant.TURN_FAILURE, function(){
-		console.log("SERVER FAILURE");
 		turnService.handleFailedTurn();
 	})
 
@@ -147,7 +146,6 @@ $(document).ready(function() {
 			if(res.success === false) {
 				setAlert(res.message, 'username');
 			} else if(res.success === true){
-				console.log(res.message);
 				clientService.emit(ServerMessagesConstant.NEW_USER, {'userName': userName});
 				switchToGameBoard();				
 				$username.val('');

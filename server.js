@@ -12,14 +12,12 @@ var connections = [];
 var loggedInPlayers = [];
 var gameOn = false;
 var timer = null;
-var currentlyDrawingUSer = null;
+var currentlyDrawingUser = null;
 
 var currentPhrase = '';
 var messages = messagesConstants.ServerMessagesConstant;
 
 server.listen(process.env.PORT || 3000);
-
-console.log('Server running @ port 3000.');
 
 app.use(express.static('public'));
 
@@ -35,7 +33,6 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 
 	//Connect
 	connections.push(socket);
-	console.log('Connected: %s sockets connected.', connections.length);
 
 	//Disconnect
 	socket.on(messages.DISCONNECT, function(data) {
@@ -46,7 +43,6 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 		if(loggedInPlayers.indexOf(socket) !== -1){
 			loggedInPlayers.splice(loggedInPlayers.indexOf(socket), 1);			
 		}
-		console.log('Disconnected: %s sockets connected.', connections.length);
 
 		if(loggedInPlayers.length < 2){
 			stopGame();
@@ -76,9 +72,7 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 		userNames.push(socket.username);
 		loggedInPlayers.push(socket);
 		updateUsernames();
-		console.log(gameOn);
 		if(!gameOn){
-			console.log('START GAME');
 			startGame();			
 		}
 	});
@@ -120,20 +114,18 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 
 	function determineNextPlayerToDraw(){
 		if(gameOn){
-			console.log('NEXT');
-			if(currentlyDrawingUSer === null){
+			if(currentlyDrawingUser === null){
 				index = 0
 			}else{
-				var previousIndex = loggedInPlayers.indexOf(currentlyDrawingUSer);
-				console.log('PREVIOUS', previousIndex);
+				var previousIndex = loggedInPlayers.indexOf(currentlyDrawingUser);
 				var index = previousIndex + 1;
 
 				if(connections[index] === undefined){
 					index = 0;
 				}				
 			}
-			currentlyDrawingUSer = loggedInPlayers[index];
-			io.to(currentlyDrawingUSer.id).emit(messages.TURN_INIT);	
+			currentlyDrawingUser = loggedInPlayers[index];
+			io.to(currentlyDrawingUser.id).emit(messages.TURN_INIT);	
 		}
 	}
 
@@ -151,7 +143,6 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 	//rysuje pierwszy użytkownik z listy
 	function startGame(){
 		if(loggedInPlayers.length > 1){
-			console.log('GAME ON');
 			gameOn = true;
 			io.sockets.emit(messages.GAME_START);
 			determineNextPlayerToDraw();
@@ -167,7 +158,6 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 	function randomPhrase(){
 		var max = phrasesLibrary.phrases.length - 1;
 		var randomIndex = Math.floor(Math.random()*(max+1));
-		console.log(randomIndex);
 		return phrasesLibrary.phrases[randomIndex];
 	}
 });
