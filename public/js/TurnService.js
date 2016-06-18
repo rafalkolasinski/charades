@@ -43,7 +43,7 @@ var TurnService = function(){
 	*/
 	this.startTurn = function (data){
 		if(!isOwnTurn){
-			displayTimer(20);
+			displayTimer(60);
 			setCurrentlyDrawingUser(data.userName);	
 		}
 	}

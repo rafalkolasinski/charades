@@ -143,7 +143,7 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 			clearTimeout(timer);
 			io.sockets.emit(messages.TURN_FAILURE);
 			determineNextPlayerToDraw();			
-		}, 20000); //na razie ustawilam 20s do testowania, pozniej bedzie 60s
+		}, 60000); //na razie ustawilam 20s do testowania, pozniej bedzie 60s
 	})
 
 	/**
