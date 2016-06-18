@@ -60,7 +60,6 @@ var TurnService = function(){
 	* Starting specific user's turn
 	*/
 	this.startOwnTurn = function (){
-		clearBoard();
 		switchMessages(true);
 		isOwnTurn = true;
 		canvasManager.enableDrawing();

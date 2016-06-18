@@ -125,6 +125,7 @@ $(document).ready(function() {
 	* Starting specific user's turn 
 	*/
 	socket.on(ServerMessagesConstant.TURN_INIT, function(){
+		clearBoard();		
 		$turnModal.show();
 	});
 
