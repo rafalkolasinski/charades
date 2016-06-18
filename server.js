@@ -101,7 +101,6 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 	});
 
 	socket.on(messages.TURN_ACCEPTED, function(){
-		console.log(loggedInPlayers.indexOf(socket));
 		var acceptedSocketIndex = loggedInPlayers.indexOf(socket);
 
 		currentPhrase = randomPhrase();
@@ -109,7 +108,6 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 			userName: loggedInPlayers[acceptedSocketIndex].username
 		});
 
-		console.log("PHRASE", currentPhrase);
 		io.to(loggedInPlayers[acceptedSocketIndex].id).emit(messages.TURN_PHRASE, {phrase: currentPhrase});
 
 		timer = setTimeout(function(){
@@ -117,7 +115,6 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 			clearTimeout(timer);
 			io.sockets.emit(messages.TURN_FAILURE);
 			determineNextPlayerToDraw();			
-			console.log("SERVER FAILURE");
 		}, 20000); //na razie ustawilam 20s do testowania, pozniej bedzie 60s
 	})
 
@@ -135,12 +132,8 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 					index = 0;
 				}				
 			}
-
-			console.log(loggedInPlayers.length, index);
 			currentlyDrawingUSer = loggedInPlayers[index];
-			var nextUserId = currentlyDrawingUSer.id;
-
-			io.to(nextUserId).emit(messages.TURN_INIT);	
+			io.to(currentlyDrawingUSer.id).emit(messages.TURN_INIT);	
 		}
 	}
 
@@ -160,11 +153,8 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 		if(loggedInPlayers.length > 1){
 			console.log('GAME ON');
 			gameOn = true;
-
-			io.sockets.emit(messages.GAME_START, {
-				id : loggedInPlayers[0].id.substring(2), 
-				userName: loggedInPlayers[0].username
-			});		
+			io.sockets.emit(messages.GAME_START);
+			determineNextPlayerToDraw();
 		}
 	}
 

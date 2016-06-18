@@ -94,9 +94,6 @@ $(document).ready(function() {
 		turnService.closeWaitingAlert();
 		$currentPhrase.hide();
 		$currentUser.show();
-		if(data.id === socket.id){
-			$turnModal.show();
-		}
 	});
 	//START TURN
 	socket.on(ServerMessagesConstant.TURN_START, function (data){
