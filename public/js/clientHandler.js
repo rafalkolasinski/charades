@@ -1,12 +1,20 @@
-//Initializing material design for Bootstrap 3.x.x
+/**
+* Initializing material design for Bootstrap 3.x.x
+*/
 $.material.init();
 
+
+/* APP INIT
+------------------------------------------------------------*/
+
 $(document).ready(function() {
+	//Initializing socket.io
 	var socket = io();
 	clientService = ClientService(socket);
 
 	var turnService = TurnService();
 
+	//Getting users on app init
 	socket.emit('get_users');
 	var html = '';
 	var userName = '';
@@ -32,22 +40,24 @@ $(document).ready(function() {
 	document.dismissTurn = turnService.dismissTurn;
 	document.closeCharadeGuessedAlert = turnService.closeCharadeGuessedAlert;
 
-
+	/**
+	* Init func - getting users, hiding alerts, setting up canvas
+	*/
 	function init(){
-		//Request for userlist
 		clientService.emit(ServerMessagesConstant.GET_USERS);
 		$turnModal.hide();
 		turnService.hideAlerts();
 		turnService.setUpCanvas();
 
-		//pętla do rysowania
 		turnService.drawingLoop();
 	}
 
 	init();
 
-
-	socket.on( ServerMessagesConstant.CONNECT, function(){
+	/**
+	* Handling user connection
+	*/
+	socket.on(ServerMessagesConstant.CONNECT, function(){
 		if(userName){
 			clientService.emit(ServerMessagesConstant.NEW_USER, {'userName': userName});
 		}else{
@@ -55,6 +65,9 @@ $(document).ready(function() {
 		}
 	});
 
+	/**
+	* Handling user logout
+	*/
 	socket.on(ServerMessagesConstant.NOT_LOGGED_IN, function(data){
 		switchToLogin();
 	});
@@ -88,28 +101,44 @@ $(document).ready(function() {
 		turnService.clearBoard();
 	});
 
-	//-----GAME---------------------------------------------------------
-	//START GAME
+
+/* GAME EVENTS
+------------------------------------------------------------*/
+
+	/**
+	* Starting the game
+	*/
 	socket.on(ServerMessagesConstant.GAME_START, function(data){
 		turnService.closeWaitingAlert();
 		$currentPhrase.hide();
 		$currentUser.show();
 	});
-	//START TURN
+
+	/**
+	* Starting common turn
+	*/
 	socket.on(ServerMessagesConstant.TURN_START, function (data){
 		turnService.startTurn(data);
 	});
-	//START OWN TURN
+
+	/**
+	* Starting specific user's turn 
+	*/
 	socket.on(ServerMessagesConstant.TURN_INIT, function(){
 		$turnModal.show();
 	});
 
+	/**
+	* Setting current phrase
+	*/
 	socket.on(ServerMessagesConstant.TURN_PHRASE, function(data){
 		turnService.setCurrentPhrase(data.phrase);
 		turnService.startOwnTurn();
 	})
 
-	//STOP GAME
+	/**
+	* Stopping the game
+	*/
 	socket.on(ServerMessagesConstant.GAME_STOP, function(){
 		if(userName){
 			turnService.stopGame();
@@ -117,29 +146,34 @@ $(document).ready(function() {
 		}
 	});
 
-	//CHARADE GUESSED
+	/**
+	* Handling guessed phrase
+	*/
 	socket.on(ServerMessagesConstant.TURN_SUCCESS, function(){
 		turnService.handleSuccessfulTurn();
 	});
 
-	//CHARADE NOT GUESSED
+	/**
+	* Handling not guessed phrase
+	*/
 	socket.on(ServerMessagesConstant.TURN_FAILURE, function(){
 		turnService.handleFailedTurn();
 	})
 
-	//----------------------------------------------------------------
 
-	//USER FORM SUBMISSION (LOG IN)
+/* USER EVENTS
+------------------------------------------------------------*/
+
+	/**
+	* Handling logging in
+	*/
 	$userForm.submit(function(e) {
 		e.preventDefault();
 		userName = $username.val();
 		if($usernameAlert) {
 			$usernameAlert.remove();
 		}
-		// $usernameAlert.hide();
-		// $usernameAlert.removeClass('username-alert-wrapper');
 
-		//Empty username validation
 		if(validateUsername(userName)) {
 			var res = validateUsername(userName);
 
@@ -153,7 +187,9 @@ $(document).ready(function() {
 		}
 	});
 
-	//MESSAGE FORM SUBMISSION
+	/**
+	* Handling sending chat message
+	*/
 	$messageForm.submit(function(e) {
 		e.preventDefault();
 		if($message.val()){
@@ -182,16 +218,19 @@ $(document).ready(function() {
 	    }
 	});
 
-
+	/**
+	* Adding new message to chat window
+	*/
 	function addNewMessage(data){
 		$chat.append(createMessage(data));
 		$chat.scrollTop($chat[0].scrollHeight);
 	}
 
-
+	/**
+	* Setting username/message alert
+	*/
 	function setAlert(error, el){
 		if(el === 'username') {
-			// $usernameAlert.show();
 			$('.username-input + .btn-basic').before($("<p id='username-alert'></p>"));
 			$usernameAlert = $('#username-alert');
 			$usernameAlert.html(error);
@@ -204,17 +243,25 @@ $(document).ready(function() {
 		}
 	}
 
-	//Czyszczenie tablicy do rysowania
+	/**
+	* Clearing the drawing board
+	*/
 	function clearBoard(){
 		clientService.emit(ServerMessagesConstant.CLEAR_BOARD);
 	}
 
+	/**
+	* Switching window to login
+	*/
 	function switchToLogin(){
 		turnService.closeWaitingAlert();
 		$userLoginArea.show();		
 		$pageWrapper.hide();
 	}
 
+	/**
+	* Switching window to game board
+	*/
 	function switchToGameBoard(){
 		if(userlist.length === 0){
 			turnService.showWaitingAlert();

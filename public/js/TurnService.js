@@ -1,9 +1,13 @@
+/* TURN HANDLING SERVICE
+------------------------------------------------------------*/
+
 var TurnService = function(){
 	var canvasManager = CanvasManager();
 
 	var timer = null;
 	var isOwnTurn = false;
 
+	//Selectors
 	var $turnModal = $('#turn-modal');
 	var $drawingTimer = $('#drawing-timer');
 	var $drawingUser = $('#drawing-user');
@@ -16,17 +20,27 @@ var TurnService = function(){
 	var $turnOverAlert = $('#turn-over-alert');
 	var $waitingAlert = $('#waiting-alert');
 
+	/**
+	* Setting currently drawing user
+	*/
 	this.setCurrentlyDrawingUser = function(userName){
 		$drawingUser.html(userName);
 		$currentUser.show();
 		$currentPhrase.hide();
 	}
 
+	/**
+	* Setting current phrase to guess
+	*/
 	this.setCurrentPhrase = function (phrase){
 		$drawingPhrase.html(phrase)
 		$currentPhrase.show();
 		$currentUser.hide();
 	}
+
+	/**
+	* Starting the turn
+	*/
 	this.startTurn = function (data){
 		if(!isOwnTurn){
 			displayTimer(20);
@@ -34,12 +48,17 @@ var TurnService = function(){
 		}
 	}
 
+	/**
+	* Handling turn acceptance
+	*/
 	this.acceptTurn = function (){
 		clientService.emit(ServerMessagesConstant.TURN_ACCEPTED);
 		$turnModal.hide();		
 	}
 
-	//rozpoczęcie tury przez użytkownika
+	/**
+	* Starting specific user's turn
+	*/
 	this.startOwnTurn = function (){
 		clearBoard();
 		switchMessages(true);
@@ -47,7 +66,9 @@ var TurnService = function(){
 		canvasManager.enableDrawing();
 	}
 
-	//Użytkownik nie chce rysować
+	/**
+	* Handling turn rejection
+	*/
 	this.dismissTurn = function (){
 		$turnModal.hide();
 		clientService.emit(ServerMessagesConstant.DISMISS_TURN);
@@ -55,6 +76,7 @@ var TurnService = function(){
 		isOwnTurn = false;
 		canvasManager.disableDrawing();
 	}
+
 	/**
 	* Displaying timer func.
 	*/
@@ -77,7 +99,9 @@ var TurnService = function(){
 		}, 1000);
 	}
 
-
+	/**
+	* Handling guessed phrase
+	*/
 	this.handleSuccessfulTurn = function() {
 		$charadeGuessedAlert.show();
 		setTimeout(function(){
@@ -94,6 +118,9 @@ var TurnService = function(){
 		}
 	}
 
+	/**
+	* Handling not guessed phrase
+	*/
 	this.handleFailedTurn = function() {
 		showTurnOverAlert();
 		clearInterval(timer);				
@@ -104,14 +131,23 @@ var TurnService = function(){
 		}
 	}
 
+	/**
+	* Setting specific user's turn flag
+	*/
 	this.setOwnTurn = function (ownTurn){
 		isOwnTurn = ownTurn;
 	}
 
+	/**
+	* Checking specific user's turn flag
+	*/
 	this.isOwnTurn = function(){
 		return isOwnTurn;
 	}
 
+	/**
+	* Handling drawing loop
+	*/
 	this.drawingLoop = function(){
 		if(isOwnTurn){
 			if (canvasManager.isNewLine()) {
@@ -124,19 +160,31 @@ var TurnService = function(){
 		setTimeout(drawingLoop, 25);
 	}
 
+	/**
+	* Switching off sending chat messages
+	*/
 	this.switchMessages = function(disable){
 		$sendMessageButton.prop('disabled', disable);
 		$message.prop('disabled', disable);
 	}
 
+	/**
+	* Removing 'charade guessed' alert
+	*/
 	this.closeCharadeGuessedAlert = function(){
 		$charadeGuessedAlert.hide();
 	}
 
+	/**
+	* Removing 'waiting for another user' alert 
+	*/
 	this.closeWaitingAlert = function(){
 		$waitingAlert.hide();
 	}
 
+	/**
+	* Showing 'turn over' alert
+	*/
 	this.showTurnOverAlert = function(){
 		$turnOverAlert.show();
 
@@ -145,10 +193,16 @@ var TurnService = function(){
 		}, 10000);
 	}
 
+	/**
+	* Removing 'turn over' alert
+	*/
 	this.closeTurnOverAlert = function(){
 			$turnOverAlert.hide();		
 	}
 
+	/**
+	* Showing 'waiting for another user' alert
+	*/
 	this.showWaitingAlert = function(gameStopped){
 		if(gameStopped){
 			$waitingAlert.html('<h4>Game paused</h4><p>Looks like you\'re the only player left. The game will start if at least one more user joins you.</p>');
@@ -159,12 +213,18 @@ var TurnService = function(){
 		$waitingAlert.show();
 	}
 
+	/**
+	* Removing all alerts
+	*/
 	this.hideAlerts = function(){
 		closeWaitingAlert();
 		closeTurnOverAlert();
 		closeCharadeGuessedAlert();
 	}
 
+	/**
+	* Stopping the game
+	*/
 	this.stopGame = function(){
 		dismissTurn();		
 		clearInterval(timer);

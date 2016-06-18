@@ -1,11 +1,21 @@
+/* SERVER CONFIGURATION
+------------------------------------------------------------*/
+
+/**
+* Basic server config
+*/
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
+/**
+* Getting server files
+*/
 var messagesConstants= require(__dirname + '/server_files/ServerMessagesConstant.js');
 var phrasesLibrary = require(__dirname + '/server_files/PhrasesLibrary.js');
 
+//Vars
 var line_history = [];
 var userNames = [];
 var connections = [];
@@ -17,24 +27,32 @@ var currentlyDrawingUser = null;
 var currentPhrase = '';
 var messages = messagesConstants.ServerMessagesConstant;
 
+//Starting server listening
 server.listen(process.env.PORT || 3000);
 
+//Getting public folder files
 app.use(express.static('public'));
 
+//Getting index file
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
 });
 
+/**
+* Listening for server connection event
+*/
 io.sockets.on(messages.CONNECTION, function(socket) {
 	//Sends users array to all clients on connection
 	socket.on(messages.GET_USERS, function() {
 		socket.emit(messages.SEND_USERNAMES, {userlist: userNames});
 	});
 
-	//Connect
+	//Adding connection to connections array
 	connections.push(socket);
 
-	//Disconnect
+	/**
+	* Listening for server disconnections event
+	*/
 	socket.on(messages.DISCONNECT, function(data) {
 		userNames.splice(userNames.indexOf(socket.username), 1);
 		updateUsernames();
@@ -49,13 +67,18 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 		}
 	});
 
+	/**
+	* Listening for checking user's login event
+	*/
 	socket.on(messages.CHECK_LOGIN, function(data){
 		if(loggedInPlayers.indexOf(socket) === -1){
 			socket.emit(messages.NOT_LOGGED_IN);
 		}
 	});
 
-	//Send message
+	/**
+	* Listening for sending chat message event
+	*/
 	socket.on(messages.SEND_MESSAGE, function(data) {
 		io.sockets.emit(messages.NEW_MESSAGE, {message: data.message, username: socket.username, phrase: currentPhrase});		
 		if(data.message.toLowerCase() === currentPhrase){
@@ -66,7 +89,9 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 		}
 	});
 
-	//New user
+	/**
+	* Listening for new user logging in event
+	*/
 	socket.on(messages.NEW_USER, function(data) {
 		socket.username = data.userName;
 		userNames.push(socket.username);
@@ -77,23 +102,32 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 		}
 	});
 
-	//new line handler
+	/**
+	* Listening for drawing a new line on canvas event
+	*/
 	socket.on(messages.DRAW_LINE, function (data) {
     	line_history.push(data.line);
     	io.sockets.emit(messages.DRAW_LINE, { line: data.line });
    });
 
-	//czyszczenie tablicy
+	/**
+	* Listening for clearing the board event
+	*/
 	socket.on(messages.CLEAR_BOARD, function () {
 		line_history = [];
     	io.sockets.emit(messages.CLEAR_BOARD);
    });
 
-
+	/**
+	* Listening for ndismissing the turn event
+	*/
 	socket.on(messages.DISMISS_TURN, function(){
 		determineNextPlayerToDraw();
 	});
 
+	/**
+	* Listening for accepting the turn event
+	*/
 	socket.on(messages.TURN_ACCEPTED, function(){
 		var acceptedSocketIndex = loggedInPlayers.indexOf(socket);
 
@@ -112,6 +146,9 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 		}, 20000); //na razie ustawilam 20s do testowania, pozniej bedzie 60s
 	})
 
+	/**
+	* Handling next player selection
+	*/
 	function determineNextPlayerToDraw(){
 		if(gameOn){
 			if(currentlyDrawingUser === null){
@@ -129,18 +166,23 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 		}
 	}
 
-	//Get active users
+	/**
+	* Sending an event of updating usernames array
+	*/
 	function updateUsernames() {
 		io.sockets.emit(messages.SEND_USERNAMES, {userlist: userNames});
 	}
 
-	//send already drawn lines
+	/**
+	* Sending an event of updating canvas lines
+	*/
 	for (var i in line_history) {
     	socket.emit(messages.DRAW_LINE, { line: line_history[i] } );
 	}
 
-	//jesli jest więcej niz 1 użytkownik (na razie) gra sie rozpoczyna
-	//rysuje pierwszy użytkownik z listy
+	/**
+	* Starting the game if number of logged in users > 1
+	*/
 	function startGame(){
 		if(loggedInPlayers.length > 1){
 			gameOn = true;
@@ -149,12 +191,18 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 		}
 	}
 
+	/**
+	* Sending an event of stopping the game
+	*/
 	function stopGame(){
 		currentPhrase = '';
 		gameOn = false;
 		io.sockets.emit(messages.GAME_STOP);
 	}
 
+	/**
+	* Choosing a phrase to guess
+	*/
 	function randomPhrase(){
 		var max = phrasesLibrary.phrases.length - 1;
 		var randomIndex = Math.floor(Math.random()*(max+1));
