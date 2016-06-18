@@ -175,17 +175,21 @@ $(document).ready(function() {
 			$usernameAlert.remove();
 		}
 
-		if(validateUsername(userName)) {
-			var res = validateUsername(userName);
+        if(userlist.length === 0 || $.inArray(userName, userlist) === -1) {
+			if(validateUsername(userName)) {
+				var res = validateUsername(userName);
 
-			if(res.success === false) {
-				setAlert(res.message, 'username');
-			} else if(res.success === true){
-				clientService.emit(ServerMessagesConstant.NEW_USER, {'userName': userName});
-				switchToGameBoard();				
-				$username.val('');
+				if(res.success === false) {
+					setAlert(res.message, 'username');
+				} else if(res.success === true){
+					clientService.emit(ServerMessagesConstant.NEW_USER, {'userName': userName});
+					switchToGameBoard();				
+					$username.val('');
+				}
 			}
-		}
+        } else {
+        	setAlert('Username already exists!', 'username');
+        }
 	});
 
 	/**
