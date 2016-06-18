@@ -62,7 +62,7 @@ io.sockets.on(messages.CONNECTION, function(socket) {
 	//Send message
 	socket.on(messages.SEND_MESSAGE, function(data) {
 		io.sockets.emit(messages.NEW_MESSAGE, {message: data.message, username: socket.username, phrase: currentPhrase});		
-		if(data.message === currentPhrase){
+		if(data.message.toLowerCase() === currentPhrase){
 			clearTimeout(timer);
 			io.sockets.emit(messages.TURN_SUCCESS);
 			currentPhrase = '';
